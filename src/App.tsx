@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Layout from './layouts/Layout';
 import Landing from './pages/Landing';
 import ProtectedRoute from './routes/ProtectedRoute';
+import SignUp from './pages/SignUp';
 
 function App() {
 
@@ -28,6 +29,9 @@ function App() {
         {
           path:"/login",
           element: <Login/>
+        }, {
+          path:"/signup",
+          element: <SignUp/>
         }
       ]
    }
