@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../config/firebase";
+import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { auth, googleProvider } from "../config/firebase";
 import { useFirebaseError } from "../hooks/useFirebaseError";
 import { FirebaseError } from "firebase/app";
 import { FaHome } from "react-icons/fa";
@@ -90,6 +90,23 @@ const SignUp: React.FC = () => {
 
   const handleGoHome = () => {
     navigate("/");
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      navigate("/");
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        handleFirebaseError(error);
+      } else {
+        handleFirebaseError({
+          code: "unknown",
+          message:
+            "An unknown error occurred with Google Sign-In. Please try again.",
+        } as FirebaseError);
+      }
+    }
   };
 
   return (
@@ -191,6 +208,26 @@ const SignUp: React.FC = () => {
             Sign Up
           </button>
         </form>
+
+        <div className="flex items-center my-4">
+          <div className="flex-grow border-t border-gray-300"></div>
+          <span className="mx-2 text-gray-500">OR</span>
+          <div className="flex-grow border-t border-gray-300"></div>
+        </div>
+
+        <div className="mt-4">
+          <button
+            onClick={handleGoogleSignIn}
+            className="w-full bg-red-500 text-white p-2 rounded hover:bg-red-400 transition duration-300 flex items-center justify-center"
+          >
+            <img
+              src="https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png"
+              alt="Google logo"
+              className="w-8 h-8 mr-2"
+            />
+            Sign in with Google
+          </button>
+        </div>
 
         <p className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{" "}
