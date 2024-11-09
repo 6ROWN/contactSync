@@ -7,6 +7,8 @@ import Layout from "./layouts/Layout";
 import Landing from "./pages/Landing";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import SignUp from "./pages/SignUp";
+import AddContact from "./pages/AddContact";
+import { Toaster } from "sonner";
 
 function App() {
   const router = createBrowserRouter([
@@ -34,6 +36,14 @@ function App() {
             </ProtectedRoute>
           ),
         },
+        {
+          path: "/add-contact",
+          element: (
+            <ProtectedRoute>
+              <AddContact />
+            </ProtectedRoute>
+          ),
+        },
       ],
     },
   ]);
@@ -41,6 +51,7 @@ function App() {
   return (
     <AuthProvider>
       <RouterProvider router={router} />
+      <Toaster richColors position="top-right" />
     </AuthProvider>
   );
 }
