@@ -1,7 +1,7 @@
 // src/components/NavBar.jsx
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import ProfileMenu from "./profileMenu";
+import ProfileMenu from "./ProfileMenu";
 
 const NavBar = () => {
   const { isAuthenticated } = useAuth();

@@ -8,6 +8,8 @@ const ProfileMenu = () => {
   const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
+  console.log(user);
+
   const handleMenuToggle = () => {
     setIsMenuOpen((prev) => !prev);
   };
@@ -29,7 +31,7 @@ const ProfileMenu = () => {
         <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-100 flex justify-center items-center">
           {user?.photoURL ? (
             <img
-              src={user?.photoURL}
+              src={user.photoURL}
               alt="User Avatar"
               className="w-full h-full object-cover"
             />
