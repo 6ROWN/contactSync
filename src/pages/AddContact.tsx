@@ -4,12 +4,14 @@ import { db } from "../config/firebase";
 import { addDoc, collection } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input"; // Import PhoneInput and isValidPhoneNumber
+import "react-phone-number-input/style.css";
 
 type ContactFormData = {
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
+  phone: string | undefined;
   address: string;
   company: string;
   birthday: string;
@@ -40,6 +42,10 @@ const AddContact: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handlePhoneChange = (value: string | undefined) => {
+    setFormData((prev) => ({ ...prev, phone: value }));
   };
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,8 +85,9 @@ const AddContact: React.FC = () => {
     if (!formData.phone) newErrors.phone = "Phone number is required.";
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Please enter a valid email address.";
-    if (formData.phone && !/^\+?[1-9]\d{1,14}$/.test(formData.phone))
+    if (formData.phone && !isValidPhoneNumber(formData.phone))
       newErrors.phone = "Please enter a valid phone number.";
+
     setErrors(newErrors);
 
     return Object.keys(newErrors).length === 0;
@@ -180,7 +187,6 @@ const AddContact: React.FC = () => {
             />
           </div>
 
-          {/* First Name and Last Name (Grid Layout) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="firstName" className="block text-gray-700">
@@ -243,14 +249,14 @@ const AddContact: React.FC = () => {
             <label htmlFor="phone" className="block text-gray-700">
               Phone Number
             </label>
-            <input
+            <PhoneInput
               id="phone"
               name="phone"
-              type="tel"
               value={formData.phone}
-              onChange={handleChange}
+              onChange={handlePhoneChange}
               className="w-full p-2 border border-gray-300 rounded"
               placeholder="Enter phone number"
+              defaultCountry="US"
             />
             {errors.phone && (
               <p className="text-red-500 text-sm">{errors.phone}</p>
