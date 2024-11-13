@@ -9,6 +9,8 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import SignUp from "./pages/SignUp";
 import AddContact from "./pages/AddContact";
 import { Toaster } from "sonner";
+import ContactDetails from "./pages/ContactDetails";
+import EditContact from "./pages/EditContact";
 
 function App() {
   const router = createBrowserRouter([
@@ -41,6 +43,22 @@ function App() {
           element: (
             <ProtectedRoute>
               <AddContact />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/contact/:id",
+          element: (
+            <ProtectedRoute>
+              <ContactDetails />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/edit/:id",
+          element: (
+            <ProtectedRoute>
+              <EditContact />
             </ProtectedRoute>
           ),
         },

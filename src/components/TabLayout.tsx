@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaThLarge, FaList } from "react-icons/fa";
 import { ContactCard } from "./ContactCard";
 

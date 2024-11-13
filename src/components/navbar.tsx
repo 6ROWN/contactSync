@@ -5,7 +5,6 @@ import ProfileMenu from "./ProfileMenu";
 
 const NavBar = () => {
   const { isAuthenticated } = useAuth();
-  console.log(isAuthenticated);
 
   return (
     <header className="bg-blue-600 text-white p-4 shadow-md w-full">

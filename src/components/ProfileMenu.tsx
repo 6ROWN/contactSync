@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { FaChevronDown } from "react-icons/fa";
 import { signOut } from "firebase/auth";
@@ -7,8 +7,6 @@ import { auth } from "../config/firebase";
 const ProfileMenu = () => {
   const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-
-  console.log(user);
 
   const handleMenuToggle = () => {
     setIsMenuOpen((prev) => !prev);

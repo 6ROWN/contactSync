@@ -1,6 +1,7 @@
 import React from "react";
 import { TfiMoreAlt } from "react-icons/tfi";
 import generateInitials from "../lib/generateInitials";
+import { useNavigate } from "react-router-dom";
 
 // Define the type for a single contact object
 interface Contact {
@@ -24,8 +25,10 @@ interface ListContactCardItemProps {
 export const ListContactCardItem: React.FC<ListContactCardItemProps> = ({
   contact,
 }) => {
+  const navigation = useNavigate();
   return (
     <>
+      {/* Single row with contact data */}
       <tr className="border-b hover:bg-gray-50 transition-all">
         <td className="p-4">
           {contact.photo ? (
@@ -50,7 +53,10 @@ export const ListContactCardItem: React.FC<ListContactCardItemProps> = ({
         <td className="p-4">{contact.company}</td>
         <td className="p-4">{contact.address}</td>
         <td className="p-4">
-          <button className="text-blue-500 hover:text-blue-700">
+          <button
+            onClick={() => navigation(`/contact/${contact.id}`)}
+            className="text-blue-500 hover:text-blue-700"
+          >
             <TfiMoreAlt />
           </button>
         </td>

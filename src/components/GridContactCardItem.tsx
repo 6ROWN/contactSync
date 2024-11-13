@@ -4,22 +4,11 @@ import generateInitials from "../lib/generateInitials";
 import { CiMail } from "react-icons/ci";
 import { MdOutlineLocalPhone } from "react-icons/md";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
-import { formatPhoneNumber } from "../lib/formatPhoneNumber";
+import { Link } from "react-router-dom";
+import { Contact } from "../types/contact";
+import { formatPhoneNumber } from "react-phone-number-input";
 
 // Define the type for a single contact object
-interface Contact {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string;
-  birthday: string;
-  company: string;
-  notes: string;
-  photo: string;
-  tags: string;
-}
 
 interface GridContactCardItemProps {
   contact: Contact;
@@ -29,7 +18,10 @@ export const GridContactCardItem: React.FC<GridContactCardItemProps> = ({
   contact,
 }) => {
   return (
-    <div className="bg-slate-50 border bottom-1 p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+    <Link
+      to={`/contact/${contact?.id}`}
+      className="bg-slate-50 border bottom-1 p-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+    >
       <div className="flex flex-col">
         <div className="flex items-center justify-between w-full">
           <div className="flex space-x-4">
@@ -79,6 +71,6 @@ export const GridContactCardItem: React.FC<GridContactCardItemProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };

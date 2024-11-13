@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { FiEdit } from "react-icons/fi";
 import { db } from "../config/firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input"; // Import PhoneInput and isValidPhoneNumber
 import "react-phone-number-input/style.css";
 import { useAuth } from "../hooks/useAuth";
+import { useLocation } from "react-router-dom";
 
 type ContactFormData = {
   firstName: string;
@@ -21,19 +22,24 @@ type ContactFormData = {
   photo: string | null;
 };
 
-const AddContact: React.FC = () => {
+const EditContact: React.FC = () => {
   const { user } = useAuth();
+  const { state } = useLocation();
+  const { contact } = state || {};
+
+  console.log(contact);
+
   const [formData, setFormData] = useState<ContactFormData>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    address: "",
-    company: "",
-    birthday: "",
-    notes: "",
-    tags: "",
-    photo: null,
+    firstName: contact?.firstName || "",
+    lastName: contact?.lastName || "",
+    email: contact?.email || "",
+    phone: contact?.phone || "",
+    address: contact?.address || "",
+    company: contact?.company || "",
+    birthday: contact?.birthday || "",
+    notes: contact?.notes || "",
+    tags: contact?.tags || "",
+    photo: contact?.photo || null,
   });
 
   const [errors, setErrors] = useState<Partial<ContactFormData>>({});
@@ -95,12 +101,21 @@ const AddContact: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  console.log(contact);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Ensure contact exists and has a valid ID
+    if (!contact || !contact.id) {
+      console.error("Contact or contact ID is missing");
+      toast.error("Failed to update contact. Contact ID is missing.");
+      return; // Early exit if there is no valid contact
+    }
+
     if (validateForm()) {
       try {
-        const newContact = {
+        const updatedContact = {
           firstName: formData.firstName,
           lastName: formData.lastName,
           email: formData.email,
@@ -114,31 +129,20 @@ const AddContact: React.FC = () => {
           userId: user?.uid,
         };
 
-        const contactsCollectionRef = collection(db, "contacts");
-        await addDoc(contactsCollectionRef, newContact);
+        // Update the document only if contact.id exists
+        const contactDocRef = doc(db, "contacts", contact.id);
+        await updateDoc(contactDocRef, updatedContact);
 
         // Show success toast using Sonner
-        toast.success("Contact added successfully!");
+        toast.success("Contact updated successfully!");
 
         // Redirect to the home page after showing the toast
         setTimeout(() => {
           navigate("/");
         }, 2000);
-
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          address: "",
-          company: "",
-          birthday: "",
-          notes: "",
-          tags: "",
-          photo: null,
-        });
       } catch (error) {
-        console.log(error);
+        console.error("Error updating contact:", error);
+        toast.error("Failed to update contact.");
       }
     }
   };
@@ -349,7 +353,7 @@ const AddContact: React.FC = () => {
             type="submit"
             className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-400 transition duration-300"
           >
-            Add Contact
+            Edit Contact
           </button>
         </form>
       </div>
@@ -357,4 +361,4 @@ const AddContact: React.FC = () => {
   );
 };
 
-export default AddContact;
+export default EditContact;
