@@ -6,7 +6,7 @@ import { MdOutlineLocalPhone } from "react-icons/md";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import { Link } from "react-router-dom";
 import { Contact } from "../types/contact";
-import { formatPhoneNumber } from "react-phone-number-input";
+import { formatPhoneNumberIntl } from "react-phone-number-input";
 
 // Define the type for a single contact object
 
@@ -62,7 +62,7 @@ export const GridContactCardItem: React.FC<GridContactCardItemProps> = ({
           </div>
           <div className="flex space-x-4 ">
             <MdOutlineLocalPhone size={24} />
-            <h3 className="">{formatPhoneNumber(contact?.phone)}</h3>
+            <h3 className="">{formatPhoneNumberIntl(contact?.phone)}</h3>
           </div>
           <div className="flex space-x-4 ">
             <HiOutlineBuildingOffice2 size={24} />

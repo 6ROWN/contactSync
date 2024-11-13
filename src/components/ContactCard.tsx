@@ -1,3 +1,5 @@
+// src/components/ContactCard.tsx
+
 import React, { useState, useEffect } from "react";
 import { db } from "../config/firebase";
 import { collection, getDocs } from "firebase/firestore"; // Firestore methods
@@ -21,9 +23,13 @@ interface Contact {
 
 interface ContactCardProps {
   isGridView: boolean;
+  searchTerm: string;
 }
 
-export const ContactCard: React.FC<ContactCardProps> = ({ isGridView }) => {
+export const ContactCard: React.FC<ContactCardProps> = ({
+  isGridView,
+  searchTerm,
+}) => {
   const [contacts, setContacts] = useState<Contact[] | undefined>(undefined);
   const [loading, setLoading] = useState(true);
 
@@ -47,6 +53,18 @@ export const ContactCard: React.FC<ContactCardProps> = ({ isGridView }) => {
     fetchContacts();
   }, []);
 
+  const filteredContacts = contacts?.filter((contact) => {
+    // Safely handling undefined or null values before calling toLowerCase
+    const fullName = `${contact?.firstName ?? ""} ${
+      contact?.lastName ?? ""
+    }`.toLowerCase();
+    return (
+      fullName.includes(searchTerm.toLowerCase()) ||
+      (contact.email ?? "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (contact.phone ?? "").includes(searchTerm)
+    );
+  });
+
   if (loading) {
     return <LoadingIndicator />;
   }
@@ -61,7 +79,7 @@ export const ContactCard: React.FC<ContactCardProps> = ({ isGridView }) => {
         }
       >
         {isGridView ? (
-          contacts?.map((contact) => (
+          filteredContacts?.map((contact) => (
             <GridContactCardItem key={contact.id} contact={contact} />
           ))
         ) : (
@@ -79,7 +97,7 @@ export const ContactCard: React.FC<ContactCardProps> = ({ isGridView }) => {
                 </tr>
               </thead>
               <tbody>
-                {contacts?.map((contact) => (
+                {filteredContacts?.map((contact) => (
                   <ListContactCardItem key={contact.id} contact={contact} />
                 ))}
               </tbody>

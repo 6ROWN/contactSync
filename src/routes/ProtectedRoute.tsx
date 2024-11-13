@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
+import { LoadingIndicator } from "../components/LoadingIndicator";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -9,7 +10,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const { isAuthenticated, user, loading } = useAuth();
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingIndicator />;
   }
 
   if (!user || !isAuthenticated) {

@@ -9,6 +9,7 @@ import { BiChevronLeft } from "react-icons/bi";
 import { Contact } from "../types/contact";
 import { auth } from "../config/firebase";
 import { toast } from "sonner";
+import { formatPhoneNumberIntl } from "react-phone-number-input";
 
 const ContactDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -129,7 +130,9 @@ const ContactDetailsPage: React.FC = () => {
         </div>
         <div className="flex items-center space-x-4">
           <span className="font-semibold text-gray-700">Phone:</span>
-          <p className="text-gray-600">{contact.phone}</p>
+          <p className="text-gray-600">
+            {formatPhoneNumberIntl(contact.phone)}
+          </p>
         </div>
         <div className="flex items-center space-x-4">
           <span className="font-semibold text-gray-700">Address:</span>
