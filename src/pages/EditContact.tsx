@@ -149,8 +149,16 @@ const EditContact: React.FC = () => {
 
   return (
     <div className="h-full flex justify-center items-center bg-gray-100 p-8">
-      <div className="p-8 rounded-lg shadow-lg w-full max-w-2xl">
-        <h2 className="text-xl font-semibold mb-6 text-center">New Contact</h2>
+      <div className="p-8 rounded-lg shadow-lg w-full max-w-2xl relative">
+        <div
+          onClick={() => navigate(-1)}
+          className="absolute right-4 top-4 text-lg bg-red-400 text-white rounded px-1.5 py-0.5 font-medium cursor-pointer"
+        >
+          X
+        </div>
+        <h2 className="text-xl font-semibold mb-6 text-center">
+          Edit Contact Information
+        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Photo Upload */}

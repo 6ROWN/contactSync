@@ -1,8 +1,15 @@
-// src/components/ContactCard.tsx
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { db } from "../config/firebase";
-import { collection, getDocs } from "firebase/firestore"; // Firestore methods
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  limit,
+  startAfter,
+  DocumentSnapshot,
+  Timestamp,
+} from "firebase/firestore";
 import { GridContactCardItem } from "./GridContactCardItem";
 import { ListContactCardItem } from "./ListContactCardItem";
 import { LoadingIndicator } from "./LoadingIndicator";
@@ -19,6 +26,7 @@ interface Contact {
   notes: string;
   photo: string;
   tags: string;
+  createdAt: Timestamp;
 }
 
 interface ContactCardProps {
@@ -32,36 +40,73 @@ export const ContactCard: React.FC<ContactCardProps> = ({
 }) => {
   const [contacts, setContacts] = useState<Contact[] | undefined>(undefined);
   const [loading, setLoading] = useState(true);
+  const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
+  const [hasMore, setHasMore] = useState(true);
 
-  useEffect(() => {
-    const fetchContacts = async () => {
+  // Memoize fetchContacts with useCallback to avoid re-creating the function on every render
+  const fetchContacts = useCallback(
+    async (nextPage: boolean = false) => {
+      setLoading(true);
+
       try {
-        const querySnapshot = await getDocs(collection(db, "contacts"));
+        let q;
+        if (nextPage && lastVisible) {
+          // For the next page, start after the last visible document
+          q = query(
+            collection(db, "contacts"),
+            orderBy("createdAt", "desc"), // Order by createdAt in descending order
+            startAfter(lastVisible), // Start from the last loaded contact
+            limit(6) // Limit results per page
+          );
+        } else {
+          // For the first page, get the first 6 documents
+          q = query(
+            collection(db, "contacts"),
+            orderBy("createdAt", "desc"), // Order by createdAt in descending order
+            limit(6)
+          );
+        }
+
+        const querySnapshot = await getDocs(q);
         const contactsData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         })) as Contact[];
 
-        setContacts(contactsData);
+        if (querySnapshot.empty) {
+          setHasMore(false);
+        } else {
+          setContacts((prevContacts) =>
+            nextPage ? [...(prevContacts || []), ...contactsData] : contactsData
+          );
+          setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]); // Set the last document for pagination
+        }
       } catch (error) {
         console.error("Error fetching contacts: ", error);
       } finally {
         setLoading(false);
       }
-    };
+    },
+    [lastVisible]
+  ); // Only include `lastVisible` as a dependency
 
+  // Fetch contacts when component mounts
+  useEffect(() => {
     fetchContacts();
-  }, []);
+  }, []); // Add `fetchContacts` to the dependency array
 
+  // Filter contacts based on the search term
   const filteredContacts = contacts?.filter((contact) => {
-    // Safely handling undefined or null values before calling toLowerCase
-    const fullName = `${contact?.firstName ?? ""} ${
-      contact?.lastName ?? ""
+    const fullName = `${contact.firstName ?? ""} ${
+      contact.lastName ?? ""
     }`.toLowerCase();
+    const email = contact.email?.toLowerCase() ?? "";
+    const phone = contact.phone ?? "";
+
     return (
       fullName.includes(searchTerm.toLowerCase()) ||
-      (contact.email ?? "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (contact.phone ?? "").includes(searchTerm)
+      email.includes(searchTerm.toLowerCase()) ||
+      phone.includes(searchTerm)
     );
   });
 
@@ -72,11 +117,11 @@ export const ContactCard: React.FC<ContactCardProps> = ({
   return (
     <div className="px-4 py-6">
       <div
-        className={
+        className={`${
           isGridView
             ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
             : "space-y-4"
-        }
+        }`}
       >
         {isGridView ? (
           filteredContacts?.map((contact) => (
@@ -104,6 +149,17 @@ export const ContactCard: React.FC<ContactCardProps> = ({
             </table>
           </div>
         )}
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-end items-center mt-6">
+        <button
+          onClick={() => fetchContacts(true)} // Load next page
+          disabled={!hasMore}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none disabled:bg-gray-300 disabled:cursor-not-allowed"
+        >
+          Load more
+        </button>
       </div>
     </div>
   );

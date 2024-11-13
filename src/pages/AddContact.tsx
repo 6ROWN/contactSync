@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FiEdit } from "react-icons/fi";
 import { db } from "../config/firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input"; // Import PhoneInput and isValidPhoneNumber
@@ -112,6 +112,7 @@ const AddContact: React.FC = () => {
           tags: formData.tags,
           photo: formData.photo || null,
           userId: user?.uid,
+          createdAt: Timestamp.now(),
         };
 
         const contactsCollectionRef = collection(db, "contacts");
