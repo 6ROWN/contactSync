@@ -3,6 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 import { FaChevronDown } from "react-icons/fa";
 import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
+import { Link } from "react-router-dom";
 
 const ProfileMenu = () => {
   const { user } = useAuth();
@@ -51,19 +52,22 @@ const ProfileMenu = () => {
 
       {/* Profile Menu (Dropdown) */}
       {isMenuOpen && (
-        <ul className="absolute right-0 mt-2 bg-white shadow-lg rounded-md p-2">
+        <ul className="absolute right-0 mt-2 bg-white shadow-lg rounded-md p-2 z-10">
           <li className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-sm cursor-pointer ">
             {user?.email}
           </li>
           <hr />
-          <li className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-sm cursor-pointer">
-            View Profile
-          </li>
+          <Link to="view-profile">
+            <li className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-sm cursor-pointer">
+              View Profile
+            </li>
+          </Link>
+
           <li className="px-4 py-2 text-gray-700 hover:bg-gray-200 rounded-sm cursor-pointer">
             Settings
           </li>
           <li
-            className="px-4 py-2 text-gray-700 bg-red-200 hover:bg-red-500 hover:text-white rounded-sm cursor-pointer"
+            className="px-4 py-2  bg-red-500 hover:bg-red-700 text-white rounded-md cursor-pointer"
             onClick={handleLogout}
           >
             Logout

@@ -11,6 +11,8 @@ import AddContact from "./pages/AddContact";
 import { Toaster } from "sonner";
 import ContactDetails from "./pages/ContactDetails";
 import EditContact from "./pages/EditContact";
+import ErrorPage from "./components/ErrorPage";
+import UserProfile from "./pages/UserProfile";
 
 function App() {
   const router = createBrowserRouter([
@@ -61,6 +63,18 @@ function App() {
               <EditContact />
             </ProtectedRoute>
           ),
+        },
+        {
+          path: "/view-profile",
+          element: (
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "*",
+          element: <ErrorPage />,
         },
       ],
     },

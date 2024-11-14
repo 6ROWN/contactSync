@@ -114,6 +114,15 @@ export const ContactCard: React.FC<ContactCardProps> = ({
     return <LoadingIndicator />;
   }
 
+  if (!contacts || contacts.length === 0) {
+    return (
+      <div className="my-20 text-center text-gray-600">
+        It seems like there are no contacts to show right now. Add some to stay
+        connected!
+      </div>
+    );
+  }
+
   return (
     <div className="px-4 py-6">
       <div
